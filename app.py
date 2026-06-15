@@ -8,6 +8,8 @@ load_dotenv()
 
 api_key = os.getenv("GEMINI_API_KEY")
 
+st.write("API Key Found:", api_key is not None)
+
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
