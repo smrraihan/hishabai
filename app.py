@@ -25,24 +25,29 @@ if uploaded_file:
 
     image = Image.open(uploaded_file)
 
-    st.image(image)
+    col1, col2 = st.columns([1, 1])
 
-    if st.button("Extract Transaction"):
+    with col1:
+        st.image(image, use_container_width=True)
 
-        prompt = """
-        Read this payment screenshot.
+    with col2:
+        st.subheader("Extracted Information")
 
-        Extract:
+        if st.button("Extract Transaction"):
 
-        - Transaction Type
-        - Merchant Name
-        - Amount
+            prompt = """
+            Read this payment screenshot.
 
-        Return only plain text.
-        """
+            Extract:
+            - Transaction Type
+            - Merchant Name
+            - Amount
 
-        response = model.generate_content(
-            [prompt, image]
-        )
+            Return only plain text.
+            """
 
-        st.write(response.text)
+            response = model.generate_content(
+                [prompt, image]
+            )
+
+            st.write(response.text)
