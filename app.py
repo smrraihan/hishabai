@@ -23,7 +23,7 @@ with col2:
     )
 
 uploaded_file = st.file_uploader(
-    "Upload bKash Screenshot",
+    "Upload or take screenshot of your transaction",
     type=["png", "jpg", "jpeg"]
 )
 
