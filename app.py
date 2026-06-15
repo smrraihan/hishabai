@@ -14,7 +14,7 @@ genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-st.title("HishabAI MVP")
+st.title("hishabAI MVP")
 
 uploaded_file = st.file_uploader(
     "Upload bKash Screenshot",
