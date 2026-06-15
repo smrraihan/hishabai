@@ -11,7 +11,7 @@ api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
-
+st.image("hishabai_logo.png", width=150)
 st.title("hishabAI MVP")
 
 uploaded_file = st.file_uploader(
