@@ -11,14 +11,14 @@ api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
-col1, col2 = st.columns([1,5])
+col1, col2 = st.columns([0.7,4])
 
 with col1:
-    st.image("hishabAI_logo.png", width=60)
+    st.image("hishabAI_logo.png", width=70)
 
 with col2:
     st.markdown(
-        "<h1 style='margin-top:10px;'>HishabAI</h1>",
+        "<h1 style='margin-top:0px;'>hishabAI</h1>",
         unsafe_allow_html=True
     )
 
