@@ -36,18 +36,28 @@ if uploaded_file:
         if st.button("Extract Transaction"):
 
             prompt = """
-            Read this payment screenshot.
-
-            Extract:
+            Analyze this image.
+            
+            If this is NOT a payment transaction screenshot,
+            respond exactly:
+            
+            NOT_A_TRANSACTION_SCREENSHOT
+            
+            Otherwise extract:
+            
             - Transaction Type
             - Merchant Name
             - Amount
-
-            Return only plain text.
+            
+            Return plain text only.
             """
 
             response = model.generate_content(
                 [prompt, image]
             )
-
-            st.write(response.text)
+            
+            if "NOT_A_TRANSACTION_SCREENSHOT" in response.text:
+                st.error("This does not appear to be a payment screenshot.")
+            else:
+                st.success("Transaction found")
+                st.write(response.text)
