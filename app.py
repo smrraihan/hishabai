@@ -11,8 +11,16 @@ api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
-st.image("hishabAI_logo.png", width=150)
-st.title("hishabAI MVP")
+col1, col2 = st.columns([1,5])
+
+with col1:
+    st.image("hishabAI_logo.png", width=60)
+
+with col2:
+    st.markdown(
+        "<h1 style='margin-top:10px;'>HishabAI</h1>",
+        unsafe_allow_html=True
+    )
 
 uploaded_file = st.file_uploader(
     "Upload bKash Screenshot",
