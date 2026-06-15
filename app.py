@@ -105,35 +105,22 @@ if uploaded_file:
 
                     st.success("Transaction found")
 
-                    st.metric(
-                        "Amount",
-                        result.get("amount", "N/A")
-                    )
+                    table_data = {
+                        "Field": [
+                            "Amount",
+                            "Transaction Type",
+                            "Merchant Name",
+                            "Transaction Date"
+                        ],
+                        "Value": [
+                            result.get("amount", "N/A"),
+                            result.get("transaction_type", "N/A"),
+                            result.get("merchant_name", "N/A"),
+                            result.get("transaction_date", "N/A")
+                        ]
+                    }
 
-                    st.write("### Transaction Type")
-                    st.write(
-                        result.get("transaction_type", "N/A")
-                    )
-
-                    st.write("### Merchant Name")
-                    st.write(
-                        result.get("merchant_name", "N/A")
-                    )
-
-                    st.write("### Transaction Date")
-                    st.write(
-                        result.get("transaction_date", "N/A")
-                    )
-
-                    st.write("### Transaction Time")
-                    st.write(
-                        result.get("transaction_time", "N/A")
-                    )
-
-                    st.write("### Transaction ID")
-                    st.write(
-                        result.get("trx_id", "N/A")
-                    )
+                    st.table(table_data)
 
             except Exception:
 
