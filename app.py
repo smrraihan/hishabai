@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 import json
 from PIL import Image
+from datetime import datetime
+import uuid
 
 # Load environment variables
 load_dotenv()
@@ -38,11 +40,11 @@ if uploaded_file:
 
     col1, col2 = st.columns([1, 1])
 
-    # Left side: Image
+    # Left side
     with col1:
         st.image(image, use_container_width=True)
 
-    # Right side: Results
+    # Right side
     with col2:
 
         st.subheader("Extracted Information")
@@ -95,7 +97,7 @@ if uploaded_file:
 
                 result = json.loads(clean_text)
 
-                if result["is_transaction"] is False:
+                if result.get("is_transaction") is False:
 
                     st.error(
                         "This does not appear to be a payment screenshot."
@@ -105,22 +107,75 @@ if uploaded_file:
 
                     st.success("Transaction found")
 
-                    table_data = {
-                        "Field": [
-                            "Amount",
-                            "Transaction Type",
-                            "Merchant Name",
-                            "Transaction Date"
-                        ],
-                        "Value": [
-                            result.get("amount", "N/A"),
-                            result.get("transaction_type", "N/A"),
-                            result.get("merchant_name", "N/A"),
-                            result.get("transaction_date", "N/A")
+                    st.subheader("Review & Correct")
+
+                    amount = st.text_input(
+                        "Amount",
+                        result.get("amount", "")
+                    )
+
+                    transaction_type = st.text_input(
+                        "Transaction Type",
+                        result.get("transaction_type", "")
+                    )
+
+                    merchant_name = st.text_input(
+                        "Merchant Name",
+                        result.get("merchant_name", "")
+                    )
+
+                    transaction_date = st.text_input(
+                        "Transaction Date",
+                        result.get("transaction_date", "")
+                    )
+
+                    transaction_time = st.text_input(
+                        "Transaction Time",
+                        result.get("transaction_time", "")
+                    )
+
+                    trx_id = st.text_input(
+                        "Transaction ID",
+                        result.get("trx_id", "")
+                    )
+
+                    category = st.selectbox(
+                        "Category",
+                        [
+                            "Food",
+                            "Transport",
+                            "Shopping",
+                            "Bills",
+                            "Health",
+                            "Entertainment",
+                            "Education",
+                            "Other"
                         ]
+                    )
+
+                    final_json = {
+                        "user_id": "anonymous",
+                        "receipt_id": str(uuid.uuid4()),
+                        "image_file": uploaded_file.name,
+                        "uploaded_at": datetime.now().isoformat(),
+                        "amount": amount,
+                        "transaction_type": transaction_type,
+                        "merchant_name": merchant_name,
+                        "transaction_date": transaction_date,
+                        "transaction_time": transaction_time,
+                        "trx_id": trx_id,
+                        "category": category,
+                        "latitude": None,
+                        "longitude": None,
+                        "place_name": None
                     }
 
-                    st.table(table_data)
+                    st.subheader("JSON Preview")
+
+                    st.json(final_json)
+
+                    if st.button("Save Receipt"):
+                        st.success("Ready to save")
 
             except Exception:
 
