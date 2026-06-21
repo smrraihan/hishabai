@@ -4,3 +4,4 @@ python-dotenv
 pillow
 Authlib
 streamlit-oauth
+streamlit-google-auth
