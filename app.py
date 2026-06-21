@@ -6,17 +6,10 @@ import json
 from PIL import Image
 from datetime import datetime
 import uuid
-from streamlit_google_auth import Authenticate
-
 
 load_dotenv()
 
-authenticator = Authenticate(
-    secret_credentials_path='google_login.json',
-    cookie_name='hishabai_cookie',
-    cookie_key='hishabai_key',
-    redirect_uri='https://hishabai.streamlit.app',
-)
+user_email = "test@hishabai.com"
 
 api_key = os.getenv("GEMINI_API_KEY")
 
@@ -24,15 +17,6 @@ genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-authenticator.check_authentification()
-
-if not st.session_state.get('connected'):
-
-    authenticator.login()
-
-    st.stop()
-
-st.write(st.session_state)
 
 # Header
 col1, col2 = st.columns([0.7, 4])
@@ -174,7 +158,7 @@ if uploaded_file:
                     ]
                 )
                     final_json = {
-                        "user_email": st.session_state["user_email"],
+                        "user_email": user_email,
                         "receipt_id": str(uuid.uuid4()),
                         "image_file": uploaded_file.name,
                         "uploaded_at": datetime.now().isoformat(),
@@ -204,6 +188,3 @@ if uploaded_file:
                 )
 
                 st.code(response.text)
-st.success(
-    f"Logged in as {st.session_state['user_email']}"
-)
