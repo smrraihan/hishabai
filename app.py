@@ -139,7 +139,9 @@ if uploaded_file:
                         result.get("trx_id", "")
                     )
 
-                    default_categories = [
+                    category = st.selectbox(
+                    "Category",
+                    [
                         "Food",
                         "Transport",
                         "Shopping",
@@ -147,26 +149,12 @@ if uploaded_file:
                         "Health",
                         "Entertainment",
                         "Education",
-                        "Other",
-                        "+ Add New Category"
+                        "Salary",
+                        "Transfer",
+                        "Investment",
+                        "Other"
                     ]
-
-                    selected_category = st.selectbox(
-                        "Category",
-                        default_categories
-                    )
-
-                    if selected_category == "+ Add New Category":
-
-                        new_category = st.text_input(
-                            "Enter new category"
-                        )
-
-                        category = new_category.strip()
-
-                    else:
-                        category = selected_category
-
+                )
                     final_json = {
                         "user_id": "anonymous",
                         "receipt_id": str(uuid.uuid4()),
