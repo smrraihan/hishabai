@@ -6,15 +6,62 @@ import json
 from PIL import Image
 from datetime import datetime
 import uuid
+from streamlit_oauth import OAuth2Component
 
 # Load environment variables
 load_dotenv()
+CLIENT_ID = st.secrets["GOOGLE_CLIENT_ID"]
+CLIENT_SECRET = st.secrets["GOOGLE_CLIENT_SECRET"]
 
 api_key = os.getenv("GEMINI_API_KEY")
 
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
+
+
+if "user_email" not in st.session_state:
+
+    oauth2 = OAuth2Component(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        "https://accounts.google.com/o/oauth2/auth",
+        "https://oauth2.googleapis.com/token",
+        "https://www.googleapis.com/oauth2/v1/userinfo"
+    )
+
+    st.title("hishabAI")
+
+    st.markdown(
+        "### Sign in with Google to continue"
+    )
+
+    result = oauth2.authorize_button(
+        "Login with Google",
+        redirect_uri="https://hishabai.streamlit.app/oauth2callback",
+        scope="openid email profile"
+    )
+
+    if result:
+
+        token = result["token"]
+
+        import requests
+
+        user_info = requests.get(
+            "https://www.googleapis.com/oauth2/v1/userinfo",
+            headers={
+                "Authorization":
+                f"Bearer {token['access_token']}"
+            }
+        ).json()
+
+        st.session_state["user_email"] = user_info["email"]
+
+        st.rerun()
+
+    st.stop()
+
 
 # Header
 col1, col2 = st.columns([0.7, 4])
@@ -156,7 +203,7 @@ if uploaded_file:
                     ]
                 )
                     final_json = {
-                        "user_id": "anonymous",
+                        "user_email": st.session_state["user_email"],
                         "receipt_id": str(uuid.uuid4()),
                         "image_file": uploaded_file.name,
                         "uploaded_at": datetime.now().isoformat(),
@@ -186,3 +233,6 @@ if uploaded_file:
                 )
 
                 st.code(response.text)
+st.success(
+    f"Logged in as {st.session_state['user_email']}"
+)
