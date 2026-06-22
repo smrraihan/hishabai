@@ -1,6 +1,5 @@
-streamlit
+streamlit>=1.48
 google-generativeai
 python-dotenv
 pillow
-Authlib
-pyrebase4
+Authlib>=1.3.2
