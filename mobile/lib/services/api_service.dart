@@ -48,13 +48,34 @@ class ApiService {
   Future<Map<String, dynamic>> _post(Map<String, dynamic> body) async {
     if (endpoint.isEmpty) throw StateError('This APK is missing API_BASE_URL.');
     body['id_token'] = await _auth.idToken();
-    final response = await http
-        .post(
-          Uri.parse(endpoint),
-          headers: const {'Content-Type': 'application/json'},
-          body: jsonEncode(body),
-        )
-        .timeout(const Duration(seconds: 60));
+    final client = http.Client();
+    late http.Response response;
+    try {
+      final request = http.Request('POST', Uri.parse(endpoint))
+        ..followRedirects = false
+        ..headers['Content-Type'] = 'application/json'
+        ..body = jsonEncode(body);
+      response = await http.Response.fromStream(
+        await client.send(request).timeout(const Duration(seconds: 60)),
+      );
+
+      // Apps Script ContentService returns its JSON through a temporary 302
+      // googleusercontent URL. Dart does not follow POST redirects for us.
+      if ({301, 302, 303}.contains(response.statusCode)) {
+        final location = response.headers['location'];
+        if (location == null) {
+          throw StateError(
+            'The hishabAI service returned an invalid redirect.',
+          );
+        }
+        final redirectUri = Uri.parse(endpoint).resolve(location);
+        response = await client
+            .get(redirectUri)
+            .timeout(const Duration(seconds: 60));
+      }
+    } finally {
+      client.close();
+    }
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw StateError(
         'The hishabAI service is unavailable (${response.statusCode}).',
