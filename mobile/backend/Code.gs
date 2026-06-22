@@ -1,4 +1,4 @@
-const SHEET_NAME = 'hishabAI Transactions';
+const SPREADSHEET_ID = '1Drhcf3oLNYRR3qXfb5Jy15kmTVF6baaumTkO6BZpLCs';
 const RECEIPTS_FOLDER_NAME = 'receipts';
 const JSON_FOLDER_NAME = 'json';
 const SHEET_HEADERS = [
@@ -138,13 +138,13 @@ function saveTransaction(body, userEmail) {
   record.json_drive_file_id = jsonFile.getId();
   record.json_drive_url = jsonFile.getUrl();
 
-  const sheet = getTransactionSheet(root);
+  const sheet = getTransactionSheet();
   appendUniqueRow(sheet, record);
   return publicRecord(record);
 }
 
 function listTransactions(userEmail) {
-  const sheet = getTransactionSheet(getRootFolder());
+  const sheet = getTransactionSheet();
   const values = sheet.getDataRange().getValues();
   if (values.length < 2) return [];
 
@@ -169,17 +169,8 @@ function getChildFolder(root, name) {
   return folders.next();
 }
 
-function getTransactionSheet(root) {
-  const files = root.getFilesByName(SHEET_NAME);
-  let spreadsheet;
-  if (files.hasNext()) {
-    spreadsheet = SpreadsheetApp.openById(files.next().getId());
-  } else {
-    spreadsheet = SpreadsheetApp.create(SHEET_NAME);
-    const file = DriveApp.getFileById(spreadsheet.getId());
-    root.addFile(file);
-    DriveApp.getRootFolder().removeFile(file);
-  }
+function getTransactionSheet() {
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheets()[0];
   if (sheet.getLastRow() === 0) sheet.appendRow(SHEET_HEADERS);
   return sheet;
