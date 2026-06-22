@@ -257,9 +257,3 @@ if uploaded_file:
             save_result = st.session_state.get("save_result")
             if already_saved and save_result:
                 st.success("Receipt, JSON, and spreadsheet row saved.")
-                receipt_url = save_result["record"].get("receipt_drive_url")
-                sheet_url = save_result.get("spreadsheet_url")
-                if receipt_url:
-                    st.link_button("Open saved receipt", receipt_url)
-                if sheet_url:
-                    st.link_button("Open transaction sheet", sheet_url)
