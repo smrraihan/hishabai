@@ -3,3 +3,5 @@ google-generativeai
 python-dotenv
 pillow
 Authlib>=1.3.2
+google-api-python-client>=2.0
+google-auth>=2.0
