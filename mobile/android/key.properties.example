@@ -1,0 +1,4 @@
+storePassword=CREATE_A_LONG_RANDOM_PASSWORD
+keyPassword=CREATE_A_LONG_RANDOM_PASSWORD
+keyAlias=hishabai
+storeFile=hishabai-release.jks
