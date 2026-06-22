@@ -1,7 +1,13 @@
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  static const webClientId = String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
+  // OAuth client IDs are public identifiers, so keeping the production default
+  // here prevents accidentally building an APK with sign-in disabled.
+  static const webClientId = String.fromEnvironment(
+    'GOOGLE_WEB_CLIENT_ID',
+    defaultValue:
+        '2933396048-c2rsa8a34bkbrgbscmr1kuqqb69fvh5c.apps.googleusercontent.com',
+  );
 
   late final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: const ['email'],
@@ -16,9 +22,6 @@ class AuthService {
   }
 
   Future<GoogleSignInAccount> signIn() async {
-    if (webClientId.isEmpty) {
-      throw StateError('This APK is missing GOOGLE_WEB_CLIENT_ID.');
-    }
     final account = await _googleSignIn.signIn();
     if (account == null) throw StateError('Google sign-in was cancelled.');
     currentUser = account;

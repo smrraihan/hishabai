@@ -25,13 +25,12 @@ folders and transaction spreadsheet through the Apps Script backend.
 ## Build
 
 Create `android/key.properties` and the JKS file as described in
-`android/key.properties.example`, then run:
+`android/key.properties.example`. Copy `.release.env.example` to
+`.release.env`, insert the real Apps Script `/exec` URL, then run:
 
 ```bash
 flutter pub get
-flutter build apk --release \
-  --dart-define=GOOGLE_WEB_CLIENT_ID=YOUR_WEB_CLIENT_ID \
-  --dart-define=API_BASE_URL=YOUR_APPS_SCRIPT_EXEC_URL
+./tool/build_release.sh
 ```
 
 The installable file is `build/app/outputs/flutter-apk/app-release.apk`.
