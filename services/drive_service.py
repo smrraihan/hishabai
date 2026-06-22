@@ -11,8 +11,7 @@ from googleapiclient.http import MediaIoBaseUpload
 ROOT_FOLDER_ID = "18ZvATG26MrCJCMxNuagPuZ43sHyHsB-1"
 SPREADSHEET_NAME = "hishabAI Transactions"
 DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
-SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets"
-SCOPES = [DRIVE_SCOPE, SHEETS_SCOPE]
+SCOPES = [DRIVE_SCOPE]
 SHEET_HEADERS = [
     "user_email",
     "receipt_id",
