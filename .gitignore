@@ -7,3 +7,9 @@ client_secret.json
 credentials_drive.json
 google_login.json
 settings.yaml
+
+# Android release signing stays only on the release machine.
+mobile/android/key.properties
+mobile/android/app/*.jks
+mobile/build/
+mobile/.dart_tool/
