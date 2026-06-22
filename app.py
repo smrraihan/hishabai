@@ -21,6 +21,7 @@ if "auth" not in st.secrets:
     st.stop()
 
 if not st.user.is_logged_in:
+    st.image("hishabAI_logo.png", width=90)
     st.title("Welcome to hishabAI")
     st.caption("Sign in with your Google account to continue.")
     if st.button("Continue with Google", type="primary"):
