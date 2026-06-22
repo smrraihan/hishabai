@@ -6,12 +6,28 @@ import json
 from PIL import Image
 from datetime import datetime
 import uuid
+import pyrebase
 
 load_dotenv()
 
-user_email = "test@hishabai.com"
+firebase_config = {
+    "apiKey": st.secrets["FIREBASE_API_KEY"],
+    "authDomain": st.secrets["FIREBASE_AUTH_DOMAIN"],
+    "projectId": st.secrets["FIREBASE_PROJECT_ID"],
+    "appId": st.secrets["FIREBASE_APP_ID"]
+}
 
-api_key = os.getenv("GEMINI_API_KEY")
+firebase = pyrebase.initialize_app(firebase_config)
+auth = firebase.auth()
+
+if "user_email" not in st.session_state:
+    st.session_state["user_email"] = None
+
+st.write("Current user:", st.session_state["user_email"])
+
+user_email = st.session_state["user_email"]
+
+api_key = st.secrets["GEMINI_API_KEY"]
 
 genai.configure(api_key=api_key)
 
