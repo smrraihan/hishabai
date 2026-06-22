@@ -3,4 +3,4 @@ google-generativeai
 python-dotenv
 pillow
 Authlib
-streamlit-google-auth
+pyrebase4
