@@ -24,13 +24,42 @@ class _AddReceiptScreenState extends State<AddReceiptScreen> {
   bool _extracting = false;
   String? _error;
 
+  @override
+  void initState() {
+    super.initState();
+    _recoverLostImage();
+  }
+
+  Future<void> _recoverLostImage() async {
+    try {
+      final response = await _picker.retrieveLostData();
+      if (!mounted || response.isEmpty) return;
+      if (response.exception != null) {
+        setState(() => _error = response.exception!.message);
+        return;
+      }
+      final files = response.files;
+      final file = files != null && files.isNotEmpty
+          ? files.first
+          : response.file;
+      if (file != null) await _usePickedFile(file);
+    } on UnimplementedError {
+      // Lost-data recovery is only implemented on Android.
+    }
+  }
+
   Future<void> _pick(ImageSource source) async {
     final file = await _picker.pickImage(
       source: source,
-      imageQuality: 88,
-      maxWidth: 1800,
+      imageQuality: 70,
+      maxWidth: 1600,
+      maxHeight: 2200,
     );
     if (file == null) return;
+    await _usePickedFile(file);
+  }
+
+  Future<void> _usePickedFile(XFile file) async {
     final bytes = await file.readAsBytes();
     if (!mounted) return;
     setState(() {

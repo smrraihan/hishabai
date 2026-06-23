@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -10,6 +11,7 @@ class ApiService {
   ApiService(this._auth);
 
   static const endpoint = String.fromEnvironment('API_BASE_URL');
+  static const _requestTimeout = Duration(minutes: 3);
   final AuthService _auth;
 
   Future<Receipt> extract({
@@ -56,7 +58,7 @@ class ApiService {
         ..headers['Content-Type'] = 'application/json'
         ..body = jsonEncode(body);
       response = await http.Response.fromStream(
-        await client.send(request).timeout(const Duration(seconds: 60)),
+        await client.send(request).timeout(_requestTimeout),
       );
 
       // Apps Script ContentService returns its JSON through a temporary 302
@@ -69,10 +71,13 @@ class ApiService {
           );
         }
         final redirectUri = Uri.parse(endpoint).resolve(location);
-        response = await client
-            .get(redirectUri)
-            .timeout(const Duration(seconds: 60));
+        response = await client.get(redirectUri).timeout(_requestTimeout);
       }
+    } on TimeoutException {
+      throw StateError(
+        'The hishabAI AI service took too long. Try a clearer cropped image, '
+        'or try again on a stronger network.',
+      );
     } finally {
       client.close();
     }
