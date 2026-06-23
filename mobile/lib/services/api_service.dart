@@ -47,6 +47,11 @@ class ApiService {
         .toList();
   }
 
+  Future<ReceiptDetail> detail(String receiptId) async {
+    final json = await _post({'action': 'detail', 'receipt_id': receiptId});
+    return ReceiptDetail.fromJson(json);
+  }
+
   Future<Map<String, dynamic>> _post(Map<String, dynamic> body) async {
     if (endpoint.isEmpty) throw StateError('This APK is missing API_BASE_URL.');
     body['id_token'] = await _auth.idToken();

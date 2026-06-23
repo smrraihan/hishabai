@@ -65,3 +65,21 @@ class Receipt {
     category: category ?? this.category,
   );
 }
+
+class ReceiptDetail {
+  ReceiptDetail({
+    required this.receipt,
+    required this.imageBase64,
+    required this.mimeType,
+  });
+
+  final Receipt receipt;
+  final String imageBase64;
+  final String mimeType;
+
+  factory ReceiptDetail.fromJson(Map<String, dynamic> json) => ReceiptDetail(
+    receipt: Receipt.fromJson(json['receipt'] as Map<String, dynamic>),
+    imageBase64: '${json['image_base64'] ?? ''}',
+    mimeType: '${json['mime_type'] ?? 'image/jpeg'}',
+  );
+}

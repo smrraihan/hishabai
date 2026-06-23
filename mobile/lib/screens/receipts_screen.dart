@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/receipt.dart';
 import '../services/receipt_store.dart';
 import '../theme/app_theme.dart';
+import 'receipt_detail_screen.dart';
 
 class ReceiptsScreen extends StatefulWidget {
   const ReceiptsScreen({super.key, required this.store});
@@ -70,11 +71,25 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
                     message:
                         'No receipts yet. Add your first receipt from the Add tab.',
                   ),
-                ...receipts.map((receipt) => _ReceiptCard(receipt: receipt)),
+                ...receipts.map(
+                  (receipt) => _ReceiptCard(
+                    receipt: receipt,
+                    onTap: () => _openReceiptDetail(context, receipt),
+                  ),
+                ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _openReceiptDetail(BuildContext context, Receipt receipt) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            ReceiptDetailScreen(receipt: receipt, store: widget.store),
       ),
     );
   }
@@ -101,55 +116,60 @@ class _Message extends StatelessWidget {
 }
 
 class _ReceiptCard extends StatelessWidget {
-  const _ReceiptCard({required this.receipt});
+  const _ReceiptCard({required this.receipt, required this.onTap});
   final Receipt receipt;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => Card(
     margin: const EdgeInsets.only(bottom: 12),
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Container(
-            width: 54,
-            height: 64,
-            decoration: BoxDecoration(
-              color: AppColors.paleGold,
-              borderRadius: BorderRadius.circular(12),
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(22),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 54,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.paleGold,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.receipt_long, color: AppColors.ink),
             ),
-            child: const Icon(Icons.receipt_long, color: AppColors.ink),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  receipt.merchantName.isEmpty
-                      ? 'Unknown merchant'
-                      : receipt.merchantName,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 4),
-                Text('${receipt.category} · ${receipt.transactionDate}'),
-                const SizedBox(height: 5),
-                Text(
-                  receipt.receiptId,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontSize: 12),
-                ),
-              ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    receipt.merchantName.isEmpty
+                        ? 'Unknown merchant'
+                        : receipt.merchantName,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 4),
+                  Text('${receipt.category} · ${receipt.transactionDate}'),
+                  const SizedBox(height: 5),
+                  Text(
+                    receipt.receiptId,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            receipt.amount,
-            style: const TextStyle(fontWeight: FontWeight.w800),
-          ),
-        ],
+            Text(
+              receipt.amount,
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+          ],
+        ),
       ),
     ),
   );

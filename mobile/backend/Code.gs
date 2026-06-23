@@ -25,6 +25,8 @@ function doPost(e) {
         return jsonResponse({ok: true, receipt: saveTransaction(body, user.email)});
       case 'list':
         return jsonResponse({ok: true, receipts: listTransactions(user.email)});
+      case 'detail':
+        return jsonResponse(getTransactionDetail(body, user.email));
       default:
         throw new Error('Unknown API action.');
     }
@@ -155,6 +157,43 @@ function listTransactions(userEmail) {
     return record;
   }).filter(record => String(record.user_email).toLowerCase() === userEmail.toLowerCase())
     .slice(-100).reverse().map(publicRecord);
+}
+
+function getTransactionDetail(body, userEmail) {
+  const receiptId = String(body.receipt_id || '');
+  if (!receiptId) throw new Error('Receipt ID is required.');
+
+  const record = findTransactionForUser(receiptId, userEmail);
+  const fileId = String(record.receipt_drive_file_id || '');
+  if (!fileId) throw new Error('Receipt image is missing.');
+
+  const file = DriveApp.getFileById(fileId);
+  const blob = file.getBlob();
+  return {
+    ok: true,
+    receipt: publicRecord(record),
+    image_base64: Utilities.base64Encode(blob.getBytes()),
+    mime_type: file.getMimeType() || blob.getContentType() || 'image/jpeg'
+  };
+}
+
+function findTransactionForUser(receiptId, userEmail) {
+  const sheet = getTransactionSheet();
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) throw new Error('Receipt was not found.');
+
+  const headers = values[0];
+  for (let index = 1; index < values.length; index++) {
+    const record = {};
+    headers.forEach((header, column) => record[header] = values[index][column]);
+    if (
+      String(record.receipt_id) === receiptId &&
+      String(record.user_email).toLowerCase() === userEmail.toLowerCase()
+    ) {
+      return record;
+    }
+  }
+  throw new Error('Receipt was not found.');
 }
 
 function getRootFolder() {
