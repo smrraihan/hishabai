@@ -10,7 +10,14 @@ import 'auth_service.dart';
 class ApiService {
   ApiService(this._auth);
 
-  static const endpoint = String.fromEnvironment('API_BASE_URL');
+  static const _fallbackEndpoint =
+      'https://script.google.com/macros/s/'
+      'AKfycbw_NYMLXr-aaboRhn4lbsHLbyhSvPs6Jw577vB56g69ZIwVFVAWW_jNv8aCXnZNR-By'
+      '/exec';
+  static const endpoint = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: _fallbackEndpoint,
+  );
   static const _requestTimeout = Duration(minutes: 3);
   final AuthService _auth;
 
